@@ -12,8 +12,8 @@ except ImportError:
     from setuptools import setup
 
 install_requires = [
-    'Django>=1.8',
-    'Django<1.11',
+    'Django>=4.2',
+    'Django<5.0',
 ]
 
 tests_require = [
