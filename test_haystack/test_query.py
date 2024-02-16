@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import str
+from builtins import object
 import datetime
 import unittest
 
@@ -491,7 +493,7 @@ class SearchQuerySetTestCase(TestCase):
     def test_boost(self):
         sqs = self.msqs.boost('foo', 10)
         self.assertTrue(isinstance(sqs, SearchQuerySet))
-        self.assertEqual(len(sqs.query.boost.keys()), 1)
+        self.assertEqual(len(list(sqs.query.boost.keys())), 1)
 
     def test_highlight(self):
         sqs = self.msqs.highlight()

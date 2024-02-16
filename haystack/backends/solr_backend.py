@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import str
+from builtins import zip
 import warnings
 
 from django.conf import settings
@@ -194,7 +196,7 @@ class SolrSearchBackend(BaseSearchBackend):
                 # and lets some of options be used as keyword arguments: `.highlight(preserveMulti=False)`
                 kwargs.update({
                     key if key.startswith("hl.") else ('hl.' + key): highlight[key] 
-                    for key in highlight.keys()
+                    for key in list(highlight.keys())
                 })
 
         if self.include_spelling is True:
@@ -207,18 +209,18 @@ class SolrSearchBackend(BaseSearchBackend):
 
         if facets is not None:
             kwargs['facet'] = 'on'
-            kwargs['facet.field'] = facets.keys()
+            kwargs['facet.field'] = list(facets.keys())
 
-            for facet_field, options in facets.items():
-                for key, value in options.items():
+            for facet_field, options in list(facets.items()):
+                for key, value in list(options.items()):
                     kwargs['f.%s.facet.%s' % (facet_field, key)] = self.conn._from_python(value)
 
         if date_facets is not None:
             kwargs['facet'] = 'on'
-            kwargs['facet.date'] = date_facets.keys()
+            kwargs['facet.date'] = list(date_facets.keys())
             kwargs['facet.date.other'] = 'none'
 
-            for key, value in date_facets.items():
+            for key, value in list(date_facets.items()):
                 kwargs["f.%s.facet.date.start" % key] = self.conn._from_python(value.get('start_date'))
                 kwargs["f.%s.facet.date.end" % key] = self.conn._from_python(value.get('end_date'))
                 gap_by_string = value.get('gap_by').upper()
@@ -257,7 +259,7 @@ class SolrSearchBackend(BaseSearchBackend):
         if stats:
             kwargs['stats'] = "true"
 
-            for k in stats.keys():
+            for k in list(stats.keys()):
                 kwargs['stats.field'] = k
 
                 for facet in stats[k]:
@@ -405,7 +407,7 @@ class SolrSearchBackend(BaseSearchBackend):
             if model and model in indexed_models:
                 index = unified_index.get_index(model)
                 index_field_map = index.field_map
-                for key, value in raw_result.items():
+                for key, value in list(raw_result.items()):
                     string_key = str(key)
                     # re-map key if alternate name used
                     if string_key in index_field_map:
@@ -449,7 +451,7 @@ class SolrSearchBackend(BaseSearchBackend):
         content_field_name = ''
         schema_fields = []
 
-        for field_name, field_class in fields.items():
+        for field_name, field_class in list(fields.items()):
             field_data = {
                 'field_name': field_class.index_fieldname,
                 'type': 'text_en',

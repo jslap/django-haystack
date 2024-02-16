@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import str
 from django.test import TestCase
 from test_haystack.discovery.search_indexes import FooIndex
 

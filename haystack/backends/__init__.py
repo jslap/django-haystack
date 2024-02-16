@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 import copy
 from copy import deepcopy
 from time import time
@@ -278,7 +280,7 @@ class SearchNode(tree.Node):
         """
         return bool(self.children)
 
-    def __nonzero__(self):      # Python 2 compatibility
+    def __bool__(self):      # Python 2 compatibility
         return type(self).__bool__(self)
 
     def __contains__(self, other):
@@ -705,7 +707,7 @@ class BaseSearchQuery(object):
         if self.boost:
             boost_list = []
 
-            for boost_word, boost_value in self.boost.items():
+            for boost_word, boost_value in list(self.boost.items()):
                 boost_list.append(self.boost_fragment(boost_word, boost_value))
 
             final_query = "%s %s" % (final_query, " ".join(boost_list))
@@ -944,10 +946,10 @@ class BaseSearchQuery(object):
         revised_facets = {}
         field_data = connections[self._using].get_unified_index().all_searchfields()
 
-        for facet_type, field_details in results.get('facets', {}).items():
+        for facet_type, field_details in list(results.get('facets', {}).items()):
             temp_facets = {}
 
-            for field, field_facets in field_details.items():
+            for field, field_facets in list(field_details.items()):
                 fieldname = field
                 if field in field_data and hasattr(field_data[field], 'get_facet_for_name'):
                     fieldname = field_data[field].get_facet_for_name()

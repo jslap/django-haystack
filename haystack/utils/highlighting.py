@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import object
 from django.utils.html import strip_tags
 
 
@@ -69,7 +70,7 @@ class Highlighter(object):
         words_found = []
 
         # Next, make sure we found any words at all.
-        for word, offset_list in highlight_locations.items():
+        for word, offset_list in list(highlight_locations.items()):
             if len(offset_list):
                 # Add all of the locations to the list.
                 words_found.extend(offset_list)
@@ -117,7 +118,7 @@ class Highlighter(object):
         # Invert highlight_locations to a location -> term list
         term_list = []
 
-        for term, locations in highlight_locations.items():
+        for term, locations in list(highlight_locations.items()):
             term_list += [(loc - start_offset, term) for loc in locations]
 
         loc_to_term = sorted(term_list)

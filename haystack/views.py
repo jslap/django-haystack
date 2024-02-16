@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import object
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404

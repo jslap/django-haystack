@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
 import datetime
 import logging as std_logging
 import os
@@ -27,7 +31,7 @@ from ..mocks import MockSearchResult
 test_pickling = True
 
 try:
-    import cPickle as pickle
+    import pickle as pickle
 except ImportError:
     try:
         import pickle
@@ -1007,7 +1011,7 @@ class LiveSolrSearchQuerySetTestCase(TestCase):
             else:
                 id_counts[item.id] = 1
 
-        for key, value in id_counts.items():
+        for key, value in list(id_counts.items()):
             if value > 1:
                 self.fail("Result with id '%s' seen more than once in the results." % key)
 

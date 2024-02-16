@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import object
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from django.utils.encoding import force_text
@@ -43,7 +44,7 @@ class SearchResult(object):
         self.stored_fields = None
         self.log = self._get_log()
 
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             if key not in self.__dict__:
                 self.__dict__[key] = value
                 self._additional_fields.append(key)
@@ -206,7 +207,7 @@ class SearchResult(object):
 
             # Iterate through the index's fields, pulling out the fields that
             # are stored.
-            for fieldname, field in index.fields.items():
+            for fieldname, field in list(index.fields.items()):
                 if field.stored is True:
                     self._stored_fields[fieldname] = getattr(self, fieldname, u'')
 

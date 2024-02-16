@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import str
 import re
 import warnings
 from datetime import datetime, timedelta
@@ -169,7 +170,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                 final_data = {}
 
                 # Convert the data to make sure it's happy.
-                for key, value in prepped_data.items():
+                for key, value in list(prepped_data.items()):
                     final_data[key] = self._from_python(value)
                 final_data['_id'] = final_data[ID]
 
@@ -352,7 +353,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
         if facets is not None:
             kwargs.setdefault('facets', {})
 
-            for facet_fieldname, extra_options in facets.items():
+            for facet_fieldname, extra_options in list(facets.items()):
                 facet_options = {
                     'terms': {
                         'field': facet_fieldname,
@@ -371,7 +372,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
         if date_facets is not None:
             kwargs.setdefault('facets', {})
 
-            for facet_fieldname, value in date_facets.items():
+            for facet_fieldname, value in list(date_facets.items()):
                 # Need to detect on gap_by & only add amount if it's more than one.
                 interval = value.get('gap_by').lower()
 
@@ -507,7 +508,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
 
         order_fields = set()
         for order in search_kwargs.get('sort', []):
-            for key in order.keys():
+            for key in list(order.keys()):
                 order_fields.add(key)
 
         geo_sort = '_geo_distance' in order_fields
@@ -602,7 +603,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                 else:
                     return datetime(1970, 1, 1) + timedelta(seconds=tm)
 
-            for facet_fieldname, facet_info in raw_results['facets'].items():
+            for facet_fieldname, facet_info in list(raw_results['facets'].items()):
                 if facet_info.get('_type', 'terms') == 'terms':
                     facets['fields'][facet_fieldname] = [(individual['term'], individual['count']) for individual in facet_info['terms']]
                 elif facet_info.get('_type', 'terms') == 'date_histogram':
@@ -625,7 +626,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
             model = haystack_get_model(app_label, model_name)
 
             if model and model in indexed_models:
-                for key, value in source.items():
+                for key, value in list(source.items()):
                     index = unified_index.get_index(model)
                     string_key = str(key)
 
@@ -668,7 +669,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
             DJANGO_ID: {'type': 'string', 'index': 'not_analyzed', 'include_in_all': False},
         }
 
-        for field_name, field_class in fields.items():
+        for field_name, field_class in list(fields.items()):
             field_mapping = FIELD_MAPPINGS.get(field_class.field_type, DEFAULT_FIELD_MAPPING).copy()
             if field_class.boost != 1.0:
                 field_mapping['boost'] = field_class.boost
@@ -721,7 +722,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
             if possible_datetime:
                 date_values = possible_datetime.groupdict()
 
-                for dk, dv in date_values.items():
+                for dk, dv in list(date_values.items()):
                     date_values[dk] = int(dv)
 
                 return datetime(date_values['year'],

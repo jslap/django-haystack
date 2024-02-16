@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import object
 import datetime
 
 from django.db import models
@@ -20,7 +21,7 @@ class Checkin(models.Model):
     comment = models.CharField(max_length=140, blank=True, default='', help_text='Say something pithy.')
     created = models.DateTimeField(default=datetime.datetime.now)
 
-    class Meta:
+    class Meta(object):
         ordering = ['-created']
 
     # Again, with GeoDjango, this would be unnecessary.

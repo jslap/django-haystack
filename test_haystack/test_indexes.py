@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from builtins import object
 import datetime
 import time
 from threading import Thread
@@ -511,18 +512,18 @@ class SearchIndexTestCase(TestCase):
 
 
 class BasicModelSearchIndex(indexes.ModelSearchIndex, indexes.Indexable):
-    class Meta:
+    class Meta(object):
         model = MockModel
 
 
 class FieldsModelSearchIndex(indexes.ModelSearchIndex, indexes.Indexable):
-    class Meta:
+    class Meta(object):
         model = MockModel
         fields = ['author', 'pub_date']
 
 
 class ExcludesModelSearchIndex(indexes.ModelSearchIndex, indexes.Indexable):
-    class Meta:
+    class Meta(object):
         model = MockModel
         excludes = ['author', 'foo']
 
@@ -530,7 +531,7 @@ class ExcludesModelSearchIndex(indexes.ModelSearchIndex, indexes.Indexable):
 class FieldsWithOverrideModelSearchIndex(indexes.ModelSearchIndex, indexes.Indexable):
     foo = indexes.IntegerField(model_attr='foo')
 
-    class Meta:
+    class Meta(object):
         model = MockModel
         fields = ['author', 'foo']
 
@@ -544,7 +545,7 @@ class FieldsWithOverrideModelSearchIndex(indexes.ModelSearchIndex, indexes.Index
 class YetAnotherBasicModelSearchIndex(indexes.ModelSearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True)
 
-    class Meta:
+    class Meta(object):
         model = AThirdMockModel
 
 

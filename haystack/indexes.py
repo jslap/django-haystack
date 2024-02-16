@@ -38,7 +38,7 @@ class DeclarativeMetaclass(type):
         # Build a dictionary of faceted fields for cross-referencing.
         facet_fields = {}
 
-        for field_name, obj in attrs.items():
+        for field_name, obj in list(attrs.items()):
             # Only need to check the FacetFields.
             if hasattr(obj, 'facet_for'):
                 if not obj.facet_for in facet_fields:
@@ -48,7 +48,7 @@ class DeclarativeMetaclass(type):
 
         built_fields = {}
 
-        for field_name, obj in attrs.items():
+        for field_name, obj in list(attrs.items()):
             if isinstance(obj, SearchField):
                 field = attrs[field_name]
                 field.set_instance_name(field_name)
@@ -104,7 +104,7 @@ class SearchIndex(with_metaclass(DeclarativeMetaclass, threading.local)):
         content_fields = []
 
         self.field_map = dict()
-        for field_name, field in self.fields.items():
+        for field_name, field in list(self.fields.items()):
             #form field map
             self.field_map[field.index_fieldname] = field_name
             if field.document is True:
@@ -193,7 +193,7 @@ class SearchIndex(with_metaclass(DeclarativeMetaclass, threading.local)):
             DJANGO_ID: force_text(obj.pk),
         }
 
-        for field_name, field in self.fields.items():
+        for field_name, field in list(self.fields.items()):
             # Use the possibly overridden name, which will default to the
             # variable name of the field.
             self.prepared_data[field.index_fieldname] = field.prepare(obj)
@@ -207,7 +207,7 @@ class SearchIndex(with_metaclass(DeclarativeMetaclass, threading.local)):
     def full_prepare(self, obj):
         self.prepared_data = self.prepare(obj)
 
-        for field_name, field in self.fields.items():
+        for field_name, field in list(self.fields.items()):
             # Duplicate data for faceted fields.
             if getattr(field, 'facet_for', None):
                 source_field_name = self.fields[field.facet_for].index_fieldname
@@ -226,14 +226,14 @@ class SearchIndex(with_metaclass(DeclarativeMetaclass, threading.local)):
 
     def get_content_field(self):
         """Returns the field that supplies the primary document to be indexed."""
-        for field_name, field in self.fields.items():
+        for field_name, field in list(self.fields.items()):
             if field.document is True:
                 return field.index_fieldname
 
     def get_field_weights(self):
         """Returns a dict of fields with weight values"""
         weights = {}
-        for field_name, field in self.fields.items():
+        for field_name, field in list(self.fields.items()):
             if field.boost:
                 weights[field_name] = field.boost
         return weights
@@ -420,7 +420,7 @@ class ModelSearchIndex(SearchIndex):
             # Add in the new fields.
             self.fields.update(self.get_fields(fields, excludes))
 
-        for field_name, field in self.fields.items():
+        for field_name, field in list(self.fields.items()):
             if field.document is True:
                 content_fields.append(field_name)
 

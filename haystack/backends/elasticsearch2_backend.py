@@ -101,7 +101,7 @@ class Elasticsearch2SearchBackend(ElasticsearchSearchBackend):
         if facets is not None:
             kwargs.setdefault('aggs', {})
 
-            for facet_fieldname, extra_options in facets.items():
+            for facet_fieldname, extra_options in list(facets.items()):
                 facet_options = {
                     'meta': {
                         '_type': 'terms',
@@ -124,7 +124,7 @@ class Elasticsearch2SearchBackend(ElasticsearchSearchBackend):
         if date_facets is not None:
             kwargs.setdefault('aggs', {})
 
-            for facet_fieldname, value in date_facets.items():
+            for facet_fieldname, value in list(date_facets.items()):
                 # Need to detect on gap_by & only add amount if it's more than one.
                 interval = value.get('gap_by').lower()
 
@@ -183,7 +183,7 @@ class Elasticsearch2SearchBackend(ElasticsearchSearchBackend):
             kwargs["query"] = {"filtered": {"query": kwargs.pop("query")}}
             filtered = kwargs["query"]["filtered"]
             if 'filter' in filtered:
-                if "bool" in filtered["filter"].keys():
+                if "bool" in list(filtered["filter"].keys()):
                     another_filters = kwargs['query']['filtered']['filter']['bool']['must']
                 else:
                     another_filters = [kwargs['query']['filtered']['filter']]
@@ -306,7 +306,7 @@ class Elasticsearch2SearchBackend(ElasticsearchSearchBackend):
                 'queries': {},
             }
 
-            for facet_fieldname, facet_info in raw_results['aggregations'].items():
+            for facet_fieldname, facet_info in list(raw_results['aggregations'].items()):
                 facet_type = facet_info['meta']['_type']
                 if facet_type == 'terms':
                     facets['fields'][facet_fieldname] = [(individual['key'], individual['doc_count']) for individual in facet_info['buckets']]

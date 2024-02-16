@@ -98,7 +98,7 @@ class ManagerTestCase(TestCase):
     def test_boost(self):
         sqs = self.search_index.objects.boost('foo', 10)
         self.assertTrue(isinstance(sqs, SearchQuerySet))
-        self.assertEqual(len(sqs.query.boost.keys()), 1)
+        self.assertEqual(len(list(sqs.query.boost.keys())), 1)
 
     def test_facets(self):
         sqs = self.search_index.objects.facet('foo')

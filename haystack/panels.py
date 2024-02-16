@@ -22,7 +22,7 @@ class HaystackDebugPanel(DebugPanel):
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
-        self._offset = dict((alias, len(connections[alias].queries)) for alias in connections.connections_info.keys())
+        self._offset = dict((alias, len(connections[alias].queries)) for alias in list(connections.connections_info.keys()))
         self._search_time = 0
         self._queries = []
         self._backends = {}
@@ -34,7 +34,7 @@ class HaystackDebugPanel(DebugPanel):
         self._queries = []
         self._backends = {}
 
-        for alias in connections.connections_info.keys():
+        for alias in list(connections.connections_info.keys()):
             search_queries = connections[alias].queries[self._offset[alias]:]
             self._backends[alias] = {
                 'time_spent': sum(float(q['time']) for q in search_queries),
@@ -43,7 +43,7 @@ class HaystackDebugPanel(DebugPanel):
             self._queries.extend([(alias, q) for q in search_queries])
 
         self._queries.sort(key=lambda x: x[1]['start'])
-        self._search_time = sum([d['time_spent'] for d in self._backends.itervalues()])
+        self._search_time = sum([d['time_spent'] for d in self._backends.values()])
         num_queries = len(self._queries)
         return "%d %s in %.2fms" % (
             num_queries,
@@ -78,7 +78,7 @@ class HaystackDebugPanel(DebugPanel):
 
         context = self.context.copy()
         context.update({
-            'backends': sorted(self._backends.items(), key=lambda x: -x[1]['time_spent']),
+            'backends': sorted(list(self._backends.items()), key=lambda x: -x[1]['time_spent']),
             'queries': [q for a, q in self._queries],
             'sql_time': self._search_time,
         })

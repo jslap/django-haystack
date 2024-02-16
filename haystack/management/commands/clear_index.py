@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         using = options.get('using')
         if not using:
-            using = connections.connections_info.keys()
+            using = list(connections.connections_info.keys())
 
         if options.get('interactive', True):
             self.stdout.write("WARNING: This will irreparably remove EVERYTHING from your search index in connection '%s'." % "', '".join(using))

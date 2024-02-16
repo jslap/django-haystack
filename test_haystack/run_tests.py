@@ -4,13 +4,14 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
+import atexit
 from os.path import abspath, dirname
 
 import nose
 
 
 def run_all(argv=None):
-    sys.exitfunc = lambda: sys.stderr.write('Shutting down....\n')
+    atexit.register(lambda: sys.stderr.write('Shutting down....\n'))
 
     # always insert coverage when running tests through setup.py
     if argv is None:
